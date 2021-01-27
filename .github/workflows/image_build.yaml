@@ -52,30 +52,9 @@ jobs:
         name: install-arm-tools
         run: |
           sudo apt-get update
-          sudo apt install gdisk zip systemd-container bmap-tools asciidoc libarchive-tools git build-essential cmake libarchive-dev pkg-config libcurl4-openssl-dev libgpgme-dev libssl-dev fakeroot dh-autoreconf qemu-utils qemu-efi-aarch64 qemu-system-arm qemu-user-static
+          sudo apt install gdisk zip systemd-container bmap-tools asciidoc libarchive-tools qemu-utils qemu-efi-aarch64 qemu-system-arm qemu-user-static
           
-          sudo git clone https://gitlab.manjaro.org/packages/core/pacman.git
-          cd pacman
-          sudo wget https://sources.archlinux.org/other/pacman/pacman-5.2.2.tar.gz
-          sudo tar -xvf pacman-5.2.2.tar.gz
-          cd pacman-5.2.2
-          sudo patch -p1 -i ../pacman-sync-first-option.patch
-          sudo ./configure --prefix=/usr --sysconfdir=/etc \
-            --localstatedir=/var --enable-doc \
-            --with-scriptlet-shell=/usr/bin/bash \
-            --with-ldconfig=/usr/bin/ldconfig
-          sudo make V=1
-          sudo make install
-          cd ..
-          sudo install -m644 pacman.conf.x86_64 /etc/pacman.conf
-          sudo install -m644 makepkg.conf /etc/
-          sudo sed -i /etc/makepkg.conf \
-            -e "s|@CARCH[@]|x86_64|g" \
-            -e "s|@CHOST[@]|x86_64-pc-linux-gnu|g" \
-            -e "s|@CARCHFLAGS[@]|-march=x86-64|g"
-          sudo install -m644 etc-pacman.d-gnupg.mount /usr/lib/systemd/system/etc-pacman.d-gnupg.mount
-          sudo install -m644 pacman-init.service /usr/lib/systemd/system/pacman-init.service
-          cd ..
+          touch /etc/makepkg.conf
           
           sudo wget https://gitlab.manjaro.org/packages/community/manjaro-arm-qemu-static/-/raw/master/qemu-static.conf -O /usr/lib/binfmt.d/qemu-static.conf
           sudo service systemd-binfmt restart
@@ -104,6 +83,7 @@ jobs:
           
           sudo sed -i -e 's|1>/dev/null||g' /usr/share/manjaro-arm-tools/lib/functions.sh   
           sudo sed -i -e 's|1> /dev/null 2>&1||g' /usr/share/manjaro-arm-tools/lib/functions.sh
+          sudo sed -i -e 's|pkgs.txt|pkgs.list|g' /usr/share/manjaro-arm-tools/lib/functions.sh
       - 
         name: checkout
         uses: actions/checkout@v2
@@ -129,7 +109,7 @@ jobs:
           echo "FILE_PATH=$(basename $FILE_PATH)" >> $GITHUB_ENV
           echo "FILE_SHA256=$(basename $FILE_PATH).sha256" >> $GITHUB_ENV
           
-          FILE_PKG=$(find /var/cache/manjaro-arm-tools/img -type f -name "*-pkgs.txt" -exec stat -c '%Y %n' {} \; | sort -nr | awk 'NR==1 {print $2}')
+          FILE_PKG=$(find /var/cache/manjaro-arm-tools/img -type f -name "*-pkgs.list" -exec stat -c '%Y %n' {} \; | sort -nr | awk 'NR==1 {print $2}')
           cp -v $FILE_PKG .
 
           echo "FILE_PKG=$(basename $FILE_PKG)" >> $GITHUB_ENV
@@ -154,7 +134,7 @@ jobs:
           asset_name: ${{ env.FILE_SHA256 }}
           asset_content_type: text/plain
       - 
-        id: upload_pkg_list
+        id: upload_pkg
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
