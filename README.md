@@ -1,5 +1,5 @@
 # Manjaro Phosh Developer Edition
-[![iso_build](https://github.com/manjaro-pinephone/phosh-dev/workflows/iso_build/badge.svg?event=repository_dispatch)](https://github.com/manjaro-pinephone/phosh-dev/actions)
+[![iso_build](https://github.com/manjaro-pinephone/phosh-dev/workflows/image_build/badge.svg)](https://github.com/manjaro-pinephone/phosh-dev/actions)
 
 ## description
 
