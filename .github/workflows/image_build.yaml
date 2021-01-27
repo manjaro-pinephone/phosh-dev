@@ -142,7 +142,7 @@ jobs:
           upload_url: ${{ needs.prepare_release.outputs.upload_url }}
           asset_path: ./${{ env.FILE_PKG }}
           asset_name: ${{ env.FILE_PKG }}
-          asset_content_type: text/plain                    
+          asset_content_type: application/zip
       - 
         name: rollback_release
         if: failure()
