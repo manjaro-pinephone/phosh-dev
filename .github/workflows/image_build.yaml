@@ -83,7 +83,6 @@ jobs:
           
           sudo sed -i -e 's|1>/dev/null||g' /usr/share/manjaro-arm-tools/lib/functions.sh   
           sudo sed -i -e 's|1> /dev/null 2>&1||g' /usr/share/manjaro-arm-tools/lib/functions.sh
-          sudo sed -i -e 's|pkgs.txt|pkgs.list|g' /usr/share/manjaro-arm-tools/lib/functions.sh
       - 
         name: checkout
         uses: actions/checkout@v2
@@ -109,10 +108,11 @@ jobs:
           echo "FILE_PATH=$(basename $FILE_PATH)" >> $GITHUB_ENV
           echo "FILE_SHA256=$(basename $FILE_PATH).sha256" >> $GITHUB_ENV
           
-          FILE_PKG=$(find /var/cache/manjaro-arm-tools/img -type f -name "*-pkgs.list" -exec stat -c '%Y %n' {} \; | sort -nr | awk 'NR==1 {print $2}')
+          FILE_PKG=$(find /var/cache/manjaro-arm-tools/img -type f -name "*-pkgs.txt" -exec stat -c '%Y %n' {} \; | sort -nr | awk 'NR==1 {print $2}')
           cp -v $FILE_PKG .
+          zip $(basename $FILE_PKG).zip $(basename $FILE_PKG)
 
-          echo "FILE_PKG=$(basename $FILE_PKG)" >> $GITHUB_ENV
+          echo "FILE_PKG=$(basename $FILE_PKG).zip" >> $GITHUB_ENV
       - 
         id: upload_release 
         uses: actions/upload-release-asset@v1
