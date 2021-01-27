@@ -54,7 +54,7 @@ jobs:
           sudo apt-get update
           sudo apt install gdisk zip systemd-container bmap-tools asciidoc libarchive-tools qemu-utils qemu-efi-aarch64 qemu-system-arm qemu-user-static
           
-          touch /etc/makepkg.conf
+          sudo touch /etc/makepkg.conf
           
           sudo wget https://gitlab.manjaro.org/packages/community/manjaro-arm-qemu-static/-/raw/master/qemu-static.conf -O /usr/lib/binfmt.d/qemu-static.conf
           sudo service systemd-binfmt restart
