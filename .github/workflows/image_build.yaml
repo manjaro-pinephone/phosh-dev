@@ -37,7 +37,7 @@ jobs:
     strategy:
       matrix:
         EDITION: [phosh]
-        BRANCH: [testing]
+        BRANCH: [unstable]
     steps:
       - 
         uses: styfle/cancel-workflow-action@0.8.0
