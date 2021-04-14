@@ -44,7 +44,7 @@ jobs:
         with:
           access_token: ${{ github.token }}
       - 
-        id: time
+        id: date
         uses: nanzm/get-time-action@v1.1
         with:
           format: 'YYYYMMDD'
@@ -119,7 +119,7 @@ jobs:
         env:
           EDITION: ${{ matrix.EDITION }}
           BRANCH: ${{ matrix.BRANCH }}
-          VERSION: dev-${{ steps.time.outputs.time }}
+          VERSION: dev-${{ steps.date.outputs.time }}
         run: |
           sudo mv -v /home/runner/work/phosh-dev/phosh-dev/arm-profiles /usr/share/manjaro-arm-tools/profiles
           sudo buildarmimg -d pinephone -e $EDITION -v $VERSION -b $BRANCH
