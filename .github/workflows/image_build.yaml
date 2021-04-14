@@ -17,6 +17,9 @@ jobs:
         uses: nanzm/get-time-action@v1.1
         with:
           format: 'YYYYMMDDHHmm'
+      -
+        name: export_tag
+        run: echo "TAG=${{ steps.time.outputs.time }}" >> $GITHUB_ENV
       - 
         id: release
         uses: actions/create-release@v1
@@ -44,7 +47,7 @@ jobs:
         with:
           access_token: ${{ github.token }}
       - 
-        id: date
+        id: time
         uses: nanzm/get-time-action@v1.1
         with:
           format: 'YYYYMMDD'
@@ -119,7 +122,7 @@ jobs:
         env:
           EDITION: ${{ matrix.EDITION }}
           BRANCH: ${{ matrix.BRANCH }}
-          VERSION: dev-${{ steps.date.outputs.time }}
+          VERSION: dev-${{ steps.time.outputs.time }}
         run: |
           sudo mv -v /home/runner/work/phosh-dev/phosh-dev/arm-profiles /usr/share/manjaro-arm-tools/profiles
           sudo buildarmimg -d pinephone -e $EDITION -v $VERSION -b $BRANCH
@@ -128,7 +131,7 @@ jobs:
           cp -v $FILE_PATH .
           
           sha256sum $(basename $FILE_PATH) > $(basename $FILE_PATH).sha256
-          mktorrent -v -a udp://tracker.opentrackr.org:1337 -w https://github.com/$GITHUB_REPOSITORY/releases/download/${{ steps.time.outputs.time }}/$(basename $FILE_PATH) -o $(basename $FILE_PATH).torrent $(basename $FILE_PATH)
+          mktorrent -v -a udp://tracker.opentrackr.org:1337 -w https://github.com/$GITHUB_REPOSITORY/releases/download/${{ env.TAG }}/$(basename $FILE_PATH) -o $(basename $FILE_PATH).torrent $(basename $FILE_PATH)
 
           echo "FILE_PATH=$(basename $FILE_PATH)" >> $GITHUB_ENV
           echo "FILE_SHA256=$(basename $FILE_PATH).sha256" >> $GITHUB_ENV
