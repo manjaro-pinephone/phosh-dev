@@ -6,15 +6,15 @@ on:
 
 jobs:
   prepare_release:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - 
-        uses: styfle/cancel-workflow-action@0.10.0
+        uses: styfle/cancel-workflow-action@0.9.0
         with:
           access_token: ${{ github.token }}
       - 
         id: time
-        uses: nanzm/get-time-action@v1.1
+        uses: boredland/get-time-action@2.0.0
         with:
           format: 'YYYYMMDDHHmm'
       - 
@@ -36,17 +36,17 @@ jobs:
     needs: prepare_release
     strategy:
       matrix:
-        DEVICE: [pinephone, pinephonepro]
+        DEVICE: [pinephone]
         EDITION: [phosh]
         BRANCH: [unstable]
     steps:
       - 
-        uses: styfle/cancel-workflow-action@0.10.0
+        uses: styfle/cancel-workflow-action@0.9.0
         with:
           access_token: ${{ github.token }}
       - 
         id: time
-        uses: nanzm/get-time-action@v1.1
+        uses: boredland/get-time-action@2.0.0
         with:
           format: 'YYYYMMDD'
       - 
@@ -78,8 +78,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.prepare_release.outputs.upload_url }}
-          asset_path: ./${{ env.FILE_SHA1 }}
-          asset_name: ${{ env.FILE_SHA1 }}
+          asset_path: ./${{ env.FILE_SHA256 }}
+          asset_name: ${{ env.FILE_SHA256 }}
           asset_content_type: text/plain
       - 
         id: upload_pkg
